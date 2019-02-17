@@ -5,6 +5,7 @@ window.addEventListener("load", init);
 let colourWheel;
 let primeColor;
 let hslConverted;
+let selectedHarmony = analogous;
 
 let box1 = document.querySelector(".box_1");
 let box2 = document.querySelector(".box_2");
@@ -15,31 +16,80 @@ let box5 = document.querySelector(".box_5");
 
 function init() {
 
+//event listeners that directs you to following functions (i.e "click", name of function)
 
 colourWheel = document.querySelector("#colorWheel");
 colorWheel.addEventListener("input", updateColor);
-document.querySelector("#analogous").addEventListener("click", analogous);
-document.querySelector("#monochromatic").addEventListener("click", monochomatic);
-document.querySelector("#triad").addEventListener("click", triad);
-document.querySelector("#complementary").addEventListener("click", complementary);
-document.querySelector("#compound").addEventListener("click", compound);
-document.querySelector("#shade").addEventListener("click", shade);
+document.querySelector("#analogous").addEventListener("click", selectAnalogous);
+document.querySelector("#monochromatic").addEventListener("click", selectMonochomatic);
+document.querySelector("#triad").addEventListener("click", selectTriad);
+document.querySelector("#complementary").addEventListener("click", selectComplementary);
+document.querySelector("#compound").addEventListener("click", selectCompound);
+document.querySelector("#shade").addEventListener("click", selectShade);
 
-updateColor();
 
 }
+
+// selectedHarmony is set to be your base color. In this case, the selected Harmony is refering to the alagous function.
+//This makes sure that whatever base you have chosen, the rest of the palette fills itself out depending on which function your refering to.
+
+function selectAnalogous() {
+
+  selectedHarmony = analogous;
+  selectedHarmony();
+}
+
+function selectMonochomatic() {
+
+  selectedHarmony = monochomatic;
+  selectedHarmony();
+
+}
+
+function selectTriad() {
+
+  selectedHarmony = triad;
+  selectedHarmony();
+
+}
+
+function selectComplementary() {
+
+  selectedHarmony = complementary;
+  selectedHarmony();
+
+}
+
+function selectCompound() {
+
+  selectedHarmony = compound;
+  selectedHarmony();
+}
+
+function selectShade() {
+
+  selectedHarmony = shade;
+  selectedHarmony();
+}
+
+//makes sure the background color of the base (in this case the middle div) matches the target (whatever color you click on, on the color wheel)
 
 function updateColor(event) {
 
     if (base) {
         base.style.backgroundColor = event.target.value;
         primeColor = event.target.value;
+        selectedHarmony()
     } 
    
 }
 
+//converts the HEX to RGB 
+
 function convertHEXtoRGB() {
 console.log(primeColor)
+
+//this divides the hex into parts
 
     let prime1 = primeColor.substring(1,3);
     let prime2 = primeColor.substring(3,5);
@@ -47,10 +97,14 @@ console.log(primeColor)
 
     console.log(prime1, prime2, prime3);
 
+//parseInt converts the r, g and b from hexadecimal to the 10 numbered system
+
     let r = parseInt(prime1, 16)
     let g = parseInt(prime2, 16);
     let b = parseInt(prime3, 16)
     console.log("rgb", r, g, b);
+
+    //returns it as r, g and b
 
     return{r, g, b};
 }
@@ -102,21 +156,29 @@ function convertRBGtoHSL(r, g, b) {
 
 function analogous () {
 
+  //took somewhat of a detour of parameters, and I'm in so deep that I just left it.
+  //I made a variable for the hex to rgb function and the rgb to hsl function
+  //in the hsl variable, I have the r g and b from parameters
+
   let rgb = convertHEXtoRGB();
   let hsl = convertRBGtoHSL(rgb.r, rgb.g, rgb.b);
 
-  let saturation = hsl.s;
-  let hue = hsl.h;
-  let lightness = hsl.l;
+  //I then made variables for s, h and l. This was because initially I made functions that calculated each, so I could just insert the numbers.
+  //Then I found out that I could just insert h, s and l and add or substract the numbers without the calculations, so really all the calculation functions were obsolete 
+  //I tried to put the h, s and l in as parameters and remove the repeating variables, but it didnt recognize the h, s and l, so I must have done something wrong somewhere.
+  //I also tried to put the repeating calculations and variables in a seperate function, and to call it, but that did not work either.
 
-  hslConverted = {hue, saturation, lightness};
-    //let colorString = `hsl(${hslConverted.hue}, ${hslConverted.saturation}%, ${hslConverted.lightness}%)`;
+  let s = hsl.s;
+  let h = hsl.h;
+  let l = hsl.l;
+
+  hslConverted = {h, s, l};
     
 
-    box1.style.backgroundColor = `hsl(${hslConverted.hue - 60}, ${hslConverted.saturation}%, ${hslConverted.lightness}%)`;
-    box2.style.backgroundColor = `hsl(${hslConverted.hue - 30}, ${hslConverted.saturation}%, ${hslConverted.lightness}%)`;
-    box4.style.backgroundColor = `hsl(${hslConverted.hue + 30}, ${hslConverted.saturation}%, ${hslConverted.lightness}%)`;
-    box5.style.backgroundColor = `hsl(${hslConverted.hue + 60}, ${hslConverted.saturation}%, ${hslConverted.lightness}%)`;
+    box1.style.backgroundColor = `hsl(${hslConverted.h - 60}, ${hslConverted.s}%, ${hslConverted.l}%)`;
+    box2.style.backgroundColor = `hsl(${hslConverted.h - 30}, ${hslConverted.s}%, ${hslConverted.l}%)`;
+    box4.style.backgroundColor = `hsl(${hslConverted.h + 30}, ${hslConverted.s}%, ${hslConverted.l}%)`;
+    box5.style.backgroundColor = `hsl(${hslConverted.h + 60}, ${hslConverted.s}%, ${hslConverted.l}%)`;
 }
 
 function monochomatic () {
@@ -124,16 +186,16 @@ function monochomatic () {
   let rgb = convertHEXtoRGB();
   let hsl = convertRBGtoHSL(rgb.r, rgb.g, rgb.b);
 
-  let saturation = hsl.s;
-  let hue = hsl.h;
-  let lightness = hsl.l;
+  let s = hsl.s;
+  let h = hsl.h;
+  let l = hsl.l;
 
-  hslConverted = {hue, saturation, lightness};
+  hslConverted = {h, s, l};
 
-  box1.style.backgroundColor = `hsl(${hslConverted.hue}, ${hslConverted.saturation}%, ${hslConverted.lightness + 10}%)`;
-  box2.style.backgroundColor = `hsl(${hslConverted.hue}, ${hslConverted.saturation}%, ${hslConverted.lightness + 40}%)`;
-  box4.style.backgroundColor = `hsl(${hslConverted.hue}, ${hslConverted.saturation}%, ${hslConverted.lightness + 30}%)`;
-  box5.style.backgroundColor = `hsl(${hslConverted.hue}, ${hslConverted.saturation}%, ${hslConverted.lightness + 20}%)`;
+  box1.style.backgroundColor = `hsl(${hslConverted.h}, ${hslConverted.s}%, ${hslConverted.l + 10}%)`;
+  box2.style.backgroundColor = `hsl(${hslConverted.h}, ${hslConverted.s}%, ${hslConverted.l + 40}%)`;
+  box4.style.backgroundColor = `hsl(${hslConverted.h}, ${hslConverted.s}%, ${hslConverted.l + 30}%)`;
+  box5.style.backgroundColor = `hsl(${hslConverted.h}, ${hslConverted.s}%, ${hslConverted.l + 20}%)`;
 
 }
 
@@ -142,16 +204,16 @@ function triad() {
   let rgb = convertHEXtoRGB();
   let hsl = convertRBGtoHSL(rgb.r, rgb.g, rgb.b);
 
-  let saturation = hsl.s;
-  let hue = hsl.h;
-  let lightness = hsl.l;
+  let s = hsl.s;
+  let h = hsl.h;
+  let l = hsl.l;
 
-  hslConverted = {hue, saturation, lightness};
+  hslConverted = {h, s, l};
 
-  box1.style.backgroundColor = `hsl(${hslConverted.hue + 120}, ${hslConverted.saturation}%, ${hslConverted.lightness}%)`;
-  box2.style.backgroundColor = `hsl(${hslConverted.hue + 90}, ${hslConverted.saturation}%, ${hslConverted.lightness}%)`;
-  box4.style.backgroundColor = `hsl(${hslConverted.hue + 90}, ${hslConverted.saturation}%, ${hslConverted.lightness + 20}%)`;
-  box5.style.backgroundColor = `hsl(${hslConverted.hue + 120}, ${hslConverted.saturation}%, ${hslConverted.lightness + 20}%)`;
+  box1.style.backgroundColor = `hsl(${hslConverted.h + 120}, ${hslConverted.s}%, ${hslConverted.l}%)`;
+  box2.style.backgroundColor = `hsl(${hslConverted.h + 90}, ${hslConverted.s}%, ${hslConverted.l}%)`;
+  box4.style.backgroundColor = `hsl(${hslConverted.h + 90}, ${hslConverted.s}%, ${hslConverted.l + 20}%)`;
+  box5.style.backgroundColor = `hsl(${hslConverted.h + 120}, ${hslConverted.s}%, ${hslConverted.l + 20}%)`;
 
 }
 
@@ -160,16 +222,16 @@ function complementary() {
   let rgb = convertHEXtoRGB();
   let hsl = convertRBGtoHSL(rgb.r, rgb.g, rgb.b);
 
-  let saturation = hsl.s;
-  let hue = hsl.h;
-  let lightness = hsl.l;
+  let s = hsl.s;
+  let h = hsl.h;
+  let l = hsl.l;
 
-  hslConverted = {hue, saturation, lightness};
+  hslConverted = {h, s, l};
 
-  box1.style.backgroundColor = `hsl(${hslConverted.hue + 180}, ${hslConverted.saturation}%, ${hslConverted.lightness}%)`;
-  box2.style.backgroundColor = `hsl(${hslConverted.hue + 140}, ${hslConverted.saturation}%, ${hslConverted.lightness}%)`;
-  box4.style.backgroundColor = `hsl(${hslConverted.hue + 100}, ${hslConverted.saturation}%, ${hslConverted.lightness}%)`;
-  box5.style.backgroundColor = `hsl(${hslConverted.hue + 60}, ${hslConverted.saturation}%, ${hslConverted.lightness}%)`;
+  box1.style.backgroundColor = `hsl(${hslConverted.h + 180}, ${hslConverted.s}%, ${hslConverted.l}%)`;
+  box2.style.backgroundColor = `hsl(${hslConverted.h + 140}, ${hslConverted.s}%, ${hslConverted.l}%)`;
+  box4.style.backgroundColor = `hsl(${hslConverted.h + 100}, ${hslConverted.s}%, ${hslConverted.l}%)`;
+  box5.style.backgroundColor = `hsl(${hslConverted.h + 60}, ${hslConverted.s}%, ${hslConverted.l}%)`;
 
 }
 
@@ -178,16 +240,16 @@ function compound() {
   let rgb = convertHEXtoRGB();
   let hsl = convertRBGtoHSL(rgb.r, rgb.g, rgb.b);
 
-  let saturation = hsl.s;
-  let hue = hsl.h;
-  let lightness = hsl.l;
+  let s = hsl.s;
+  let h = hsl.h;
+  let l = hsl.l;
 
-  hslConverted = {hue, saturation, lightness};
+  hslConverted = {h, s, l};
 
-  box1.style.backgroundColor = `hsl(${hslConverted.hue + 180}, ${hslConverted.saturation}%, ${hslConverted.lightness}%)`;
-  box2.style.backgroundColor = `hsl(${hslConverted.hue + 100}, ${hslConverted.saturation}%, ${hslConverted.lightness}%)`;
-  box4.style.backgroundColor = `hsl(${hslConverted.hue + 40}, ${hslConverted.saturation}%, ${hslConverted.lightness}%)`;
-  box5.style.backgroundColor = `hsl(${hslConverted.hue + 20}, ${hslConverted.saturation}%, ${hslConverted.lightness}%)`;
+  box1.style.backgroundColor = `hsl(${hslConverted.h + 180}, ${hslConverted.s}%, ${hslConverted.l}%)`;
+  box2.style.backgroundColor = `hsl(${hslConverted.h + 100}, ${hslConverted.s}%, ${hslConverted.l}%)`;
+  box4.style.backgroundColor = `hsl(${hslConverted.h + 40}, ${hslConverted.s}%, ${hslConverted.l}%)`;
+  box5.style.backgroundColor = `hsl(${hslConverted.h + 20}, ${hslConverted.s}%, ${hslConverted.l}%)`;
 
 }
 
@@ -196,15 +258,15 @@ function shade() {
   let rgb = convertHEXtoRGB();
   let hsl = convertRBGtoHSL(rgb.r, rgb.g, rgb.b);
 
-  let saturation = hsl.s;
-  let hue = hsl.h;
-  let lightness = hsl.l;
+  let s = hsl.s;
+  let h = hsl.h;
+  let l = hsl.l;
 
-  hslConverted = {hue, saturation, lightness};
+  hslConverted = {h, s, l};
 
-  box1.style.backgroundColor = `hsl(${hslConverted.hue}, ${hslConverted.saturation + 20}%, ${hslConverted.lightness}%)`;
-  box2.style.backgroundColor = `hsl(${hslConverted.hue}, ${hslConverted.saturation + 10}%, ${hslConverted.lightness}%)`;
-  box4.style.backgroundColor = `hsl(${hslConverted.hue}, ${hslConverted.saturation - 20}%, ${hslConverted.lightness}%)`;
-  box5.style.backgroundColor = `hsl(${hslConverted.hue}, ${hslConverted.saturation - 60}%, ${hslConverted.lightness}%)`;
+  box1.style.backgroundColor = `hsl(${hslConverted.h}, ${hslConverted.s + 20}%, ${hslConverted.l}%)`;
+  box2.style.backgroundColor = `hsl(${hslConverted.h}, ${hslConverted.s + 10}%, ${hslConverted.l}%)`;
+  box4.style.backgroundColor = `hsl(${hslConverted.h}, ${hslConverted.s - 20}%, ${hslConverted.l}%)`;
+  box5.style.backgroundColor = `hsl(${hslConverted.h}, ${hslConverted.s - 60}%, ${hslConverted.l}%)`;
 
 }
